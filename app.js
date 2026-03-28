@@ -5,12 +5,21 @@ let keys = [];
 let currentKey = null;
 let isAdmin = false;
 
-// LOAD KEY
-fetch("key.json")
-.then(res => res.json())
-.then(data => keys = data);
+// ===== LOAD KEY LOCAL =====
+function loadKeysFromStorage() {
+    let data = localStorage.getItem("keys");
+    if (data) {
+        keys = JSON.parse(data);
+    }
+}
+loadKeysFromStorage();
 
-// LOGIN
+// ===== SAVE KEY =====
+function saveKeys() {
+    localStorage.setItem("keys", JSON.stringify(keys));
+}
+
+// ===== LOGIN =====
 function login() {
     let input = document.getElementById("keyInput").value;
 
@@ -38,9 +47,11 @@ function login() {
 
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("main").style.display = "block";
+
+    loadKeys();
 }
 
-// TIMER
+// ===== TIMER =====
 function startTimer() {
     setInterval(() => {
         if (!currentKey) return;
@@ -62,7 +73,7 @@ function startTimer() {
     }, 1000);
 }
 
-// ADMIN
+// ===== ADMIN =====
 function createKey() {
     let k = document.getElementById("newKey").value;
     let time = parseInt(document.getElementById("timeKey").value);
@@ -97,10 +108,6 @@ function loadKeys() {
         JSON.stringify(keys, null, 2);
 }
 
-function saveKeys() {
-    console.log("Updated keys:", keys);
-}
-
 // ===== MD5 =====
 function isValidMD5(md5) {
     return /^[a-f0-9]{32}$/i.test(md5);
@@ -119,19 +126,17 @@ function convertMD5() {
 
     if (!isValidMD5(md5)) {
         document.getElementById("md5Result").innerText =
-            "❌ Mã MD5 không hợp lệ!";
+            "❌ MD5 không hợp lệ!";
         document.getElementById("md5Confidence").innerText = "";
         return;
     }
 
     let num = md5ToNumber(md5);
     let result = num >= 50 ? 'TÀI' : 'XỈU';
-
     let confidence = 50 + Math.floor(Math.random() * 50);
 
     document.getElementById("md5Result").innerText =
         `Kết quả: ${result}`;
-
     document.getElementById("md5Confidence").innerText =
         `Độ tin cậy: ${confidence}%`;
 }
@@ -169,7 +174,7 @@ function predictAI() {
     return final;
 }
 
-// ADD RESULT
+// ===== ADD RESULT =====
 function addResult(r) {
     history.push(r);
 
