@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>LAM TOOL V20.2</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TIMER -->
+<div id="timerBox">⏳ --:--</div>
+
+<!-- LOGIN -->
+<div id="loginBox">
+    <h2>🔐 LOGIN KEY</h2>
+    <input type="text" id="keyInput" placeholder="Nhập KEY...">
+    <button onclick="login()">Đăng nhập</button>
+</div>
+
+<!-- MAIN -->
+<div id="main" style="display:none;">
+    <h1>🎰 LAM TOOL V20</h1>
+
+    <!-- MD5 RIÊNG -->
+    <h3>🔐 Phân tích MD5</h3>
+    <input id="md5Input" placeholder="Nhập mã MD5 (32 ký tự)">
+    <button onclick="convertMD5()">Phân tích</button>
+
+    <div class="card">
+        <p id="md5Result">Kết quả: ---</p>
+        <p id="md5Confidence">Độ tin cậy: 0%</p>
+    </div>
+
+    <!-- AI -->
+    <div class="card">
+        <h3>Dự đoán AI:</h3>
+        <p id="predict">---</p>
+        <p id="confidence">0%</p>
+    </div>
+
+    <div class="card">
+        <h3>Lịch sử:</h3>
+        <p id="history"></p>
+    </div>
+
+    <button onclick="addResult('T')">Tài</button>
+    <button onclick="addResult('X')">Xỉu</button>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" style="display:none;">
+    <h2>🛠 ADMIN MENU</h2>
+
+    <input id="newKey" placeholder="Tạo key">
+    <input id="timeKey" placeholder="Số phút">
+    <button onclick="createKey()">Tạo KEY</button>
+
+    <input id="extendKey" placeholder="Key cần gia hạn">
+    <input id="extendTime" placeholder="Thêm phút">
+    <button onclick="extendKeyTime()">Gia hạn</button>
+
+    <pre id="keyList"></pre>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

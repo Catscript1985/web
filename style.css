@@ -1,0 +1,32 @@
+body {
+    background: black;
+    color: #00ffcc;
+    font-family: Arial;
+    text-align: center;
+}
+
+.card {
+    border: 1px solid #00ffcc;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+button {
+    background: #00ffcc;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+#timerBox {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #00ffcc;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}
