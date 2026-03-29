@@ -2,8 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>LAM TOOL V21</title>
+<title>LAM TOOL V22</title>
 <link rel="stylesheet" href="style.css">
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
 </head>
 <body>
 
@@ -11,39 +16,42 @@
 
 <div id="loginBox">
     <h2>🔐 LOGIN KEY</h2>
-    <input id="keyInput" placeholder="Nhập KEY">
-    <button onclick="login()">Đăng nhập</button>
+    <input id="keyInput">
+    <button onclick="login()">Login</button>
 </div>
 
 <div id="main" style="display:none;">
-    <h1>🎰 LAM TOOL V21</h1>
+    <h1>🎰 LAM TOOL V22</h1>
 
-    <h3>🔐 MD5</h3>
-    <input id="md5Input" placeholder="Nhập MD5">
-    <button onclick="convertMD5()">Phân tích</button>
+    <h3>MD5</h3>
+    <input id="md5Input">
+    <button onclick="convertMD5()">Check</button>
 
-    <div class="card">
-        <p id="md5Result">---</p>
-        <p id="md5Confidence"></p>
-    </div>
+    <p id="md5Result"></p>
+    <p id="md5Confidence"></p>
 
-    <div class="card">
-        <h3>AI Predict</h3>
-        <p id="predict">---</p>
-        <p id="confidence">0%</p>
-    </div>
+    <h3>AI</h3>
+    <p id="predict"></p>
+    <p id="confidence"></p>
 
-    <div class="card">
-        <p id="history"></p>
-    </div>
+    <p id="history"></p>
 
-    <button onclick="addResult('T')">Tài</button>
-    <button onclick="addResult('X')">Xỉu</button>
+    <button onclick="addResult('T')">T</button>
+    <button onclick="addResult('X')">X</button>
 </div>
 
 <div id="admin" style="display:none;">
     <h2>ADMIN PANEL</h2>
-    <p>⚠️ Bản online: tạo key phải sửa file GitHub</p>
+
+    <input id="newKey" placeholder="key">
+    <input id="timeKey" placeholder="phút">
+    <button onclick="createKey()">Tạo KEY</button>
+
+    <input id="extendKey">
+    <input id="extendTime">
+    <button onclick="extendKey()">Gia hạn</button>
+
+    <pre id="keyList"></pre>
 </div>
 
 <script src="app.js"></script>
