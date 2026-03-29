@@ -1,6 +1,6 @@
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
-  apiKey: "DÁN_KEY",
+  apiKey: "DÁN_API_KEY",
   authDomain: "xxx.firebaseapp.com",
   databaseURL: "https://xxx-default-rtdb.firebaseio.com",
   projectId: "xxx",
@@ -12,18 +12,20 @@ const db = firebase.database();
 // ===== VAR =====
 let history = [];
 let weights = { trend: 1, ml: 1, dice: 1 };
-let currentKey = null;
+let currentExpire = null;
 
 // ===== LOGIN =====
 function login() {
     let input = document.getElementById("keyInput").value;
 
+    // ADMIN
     if (input === "TGL1985@@" || input === "TGL1985@") {
         document.getElementById("admin").style.display = "block";
         loadKeys();
     }
 
-    db.ref("keys/" + input).once("value", snap => {
+    db.ref("keys/" + input).once("value")
+    .then(snap => {
         let data = snap.val();
 
         if (!data && input !== "TGL1985@@" && input !== "TGL1985@") {
@@ -40,20 +42,23 @@ function login() {
                 return;
             }
 
-            currentKey = exp;
-            startTimer(exp);
+            currentExpire = exp;
+            startTimer();
         }
 
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("main").style.display = "block";
-    });
+    })
+    .catch(err => alert("Lỗi kết nối Firebase: " + err));
 }
 
 // ===== TIMER =====
-function startTimer(exp) {
+function startTimer() {
     setInterval(() => {
+        if (!currentExpire) return;
+
         let now = new Date();
-        let diff = exp - now;
+        let diff = currentExpire - now;
 
         if (diff <= 0) {
             alert("Key hết hạn!");
@@ -70,25 +75,34 @@ function startTimer(exp) {
 
 // ===== ADMIN =====
 function createKey() {
-    let k = document.getElementById("newKey").value;
+    let k = document.getElementById("newKey").value.trim();
     let time = parseInt(document.getElementById("timeKey").value);
+
+    if (!k || !time) {
+        alert("Nhập thiếu!");
+        return;
+    }
 
     let exp = new Date();
     exp.setMinutes(exp.getMinutes() + time);
 
     db.ref("keys/" + k).set({
         expire: exp.toISOString()
-    });
-
-    loadKeys();
+    })
+    .then(() => {
+        alert("✅ Tạo key thành công!");
+        loadKeys();
+    })
+    .catch(err => alert("❌ Lỗi: " + err));
 }
 
 function extendKeyTime() {
     let k = document.getElementById("extendKey").value;
     let time = parseInt(document.getElementById("extendTime").value);
 
-    db.ref("keys/" + k).once("value", snap => {
+    db.ref("keys/" + k).once("value").then(snap => {
         let data = snap.val();
+
         if (!data) return alert("Không có key");
 
         let exp = new Date(data.expire);
@@ -96,12 +110,14 @@ function extendKeyTime() {
 
         db.ref("keys/" + k).update({
             expire: exp.toISOString()
+        }).then(() => {
+            alert("✅ Gia hạn thành công!");
+            loadKeys();
         });
     });
-
-    loadKeys();
 }
 
+// LOAD KEY LIST REALTIME
 function loadKeys() {
     db.ref("keys").on("value", snap => {
         document.getElementById("keyList").innerText =
@@ -126,8 +142,7 @@ function convertMD5() {
     let md5 = document.getElementById("md5Input").value.trim();
 
     if (!isValidMD5(md5)) {
-        document.getElementById("md5Result").innerText =
-            "❌ MD5 không hợp lệ!";
+        document.getElementById("md5Result").innerText = "❌ MD5 không hợp lệ!";
         document.getElementById("md5Confidence").innerText = "";
         return;
     }
@@ -143,7 +158,7 @@ function convertMD5() {
         `Độ tin cậy: ${confidence}%`;
 }
 
-// ===== AI V21 PRO =====
+// ===== AI =====
 function predictAI() {
     if (history.length < 5) return;
 
