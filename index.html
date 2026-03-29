@@ -2,12 +2,12 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>LAM TOOL V22</title>
+<title>LAM TOOL V22 PRO</title>
 <link rel="stylesheet" href="style.css">
 
 <!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 </head>
 <body>
@@ -16,40 +16,49 @@
 
 <div id="loginBox">
     <h2>🔐 LOGIN KEY</h2>
-    <input id="keyInput">
-    <button onclick="login()">Login</button>
+    <input id="keyInput" placeholder="Nhập KEY">
+    <button onclick="login()">Đăng nhập</button>
 </div>
 
 <div id="main" style="display:none;">
     <h1>🎰 LAM TOOL V22</h1>
 
-    <h3>MD5</h3>
-    <input id="md5Input">
-    <button onclick="convertMD5()">Check</button>
+    <!-- MD5 -->
+    <h3>🔐 MD5</h3>
+    <input id="md5Input" placeholder="Nhập MD5">
+    <button onclick="convertMD5()">Phân tích</button>
 
-    <p id="md5Result"></p>
-    <p id="md5Confidence"></p>
+    <div class="card">
+        <p id="md5Result">---</p>
+        <p id="md5Confidence"></p>
+    </div>
 
-    <h3>AI</h3>
-    <p id="predict"></p>
-    <p id="confidence"></p>
+    <!-- AI -->
+    <div class="card">
+        <h3>AI Predict</h3>
+        <p id="predict">---</p>
+        <p id="confidence">0%</p>
+    </div>
 
-    <p id="history"></p>
+    <!-- HISTORY -->
+    <div class="card">
+        <p id="history"></p>
+    </div>
 
-    <button onclick="addResult('T')">T</button>
-    <button onclick="addResult('X')">X</button>
+    <button onclick="addResult('T')">Tài</button>
+    <button onclick="addResult('X')">Xỉu</button>
 </div>
 
 <div id="admin" style="display:none;">
-    <h2>ADMIN PANEL</h2>
+    <h2>🛠 ADMIN PANEL</h2>
 
-    <input id="newKey" placeholder="key">
-    <input id="timeKey" placeholder="phút">
+    <input id="newKey" placeholder="Tạo key">
+    <input id="timeKey" placeholder="Phút">
     <button onclick="createKey()">Tạo KEY</button>
 
-    <input id="extendKey">
-    <input id="extendTime">
-    <button onclick="extendKey()">Gia hạn</button>
+    <input id="extendKey" placeholder="Key cần gia hạn">
+    <input id="extendTime" placeholder="Phút">
+    <button onclick="extendKeyTime()">Gia hạn</button>
 
     <pre id="keyList"></pre>
 </div>
