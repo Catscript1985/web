@@ -1,27 +1,21 @@
 let history = [];
-let weights = { dice: 1, trend: 1, ml: 1 };
+let weights = { trend: 1, ml: 1, dice: 1 };
 
 let keys = [];
 let currentKey = null;
 let isAdmin = false;
 
-// ===== LOAD KEY LOCAL =====
-function loadKeysFromStorage() {
-    let data = localStorage.getItem("keys");
-    if (data) {
-        keys = JSON.parse(data);
-    }
-}
-loadKeysFromStorage();
-
-// ===== SAVE KEY =====
-function saveKeys() {
-    localStorage.setItem("keys", JSON.stringify(keys));
+// ===== LOAD KEY ONLINE =====
+async function loadKeysOnline() {
+    let res = await fetch("https://raw.githubusercontent.com/tenban/lamtool/main/key.json");
+    keys = await res.json();
 }
 
 // ===== LOGIN =====
-function login() {
+async function login() {
     let input = document.getElementById("keyInput").value;
+
+    await loadKeysOnline();
 
     if (input === "TGL1985@@" || input === "TGL1985@") {
         isAdmin = true;
@@ -47,8 +41,6 @@ function login() {
 
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("main").style.display = "block";
-
-    loadKeys();
 }
 
 // ===== TIMER =====
@@ -73,41 +65,6 @@ function startTimer() {
     }, 1000);
 }
 
-// ===== ADMIN =====
-function createKey() {
-    let k = document.getElementById("newKey").value;
-    let time = parseInt(document.getElementById("timeKey").value);
-
-    let expire = new Date();
-    expire.setMinutes(expire.getMinutes() + time);
-
-    keys.push({ key: k, expire: expire });
-
-    saveKeys();
-    loadKeys();
-}
-
-function extendKeyTime() {
-    let k = document.getElementById("extendKey").value;
-    let time = parseInt(document.getElementById("extendTime").value);
-
-    let keyObj = keys.find(x => x.key === k);
-    if (!keyObj) return alert("Không tìm thấy key");
-
-    let exp = new Date(keyObj.expire);
-    exp.setMinutes(exp.getMinutes() + time);
-
-    keyObj.expire = exp;
-
-    saveKeys();
-    loadKeys();
-}
-
-function loadKeys() {
-    document.getElementById("keyList").innerText =
-        JSON.stringify(keys, null, 2);
-}
-
 // ===== MD5 =====
 function isValidMD5(md5) {
     return /^[a-f0-9]{32}$/i.test(md5);
@@ -125,45 +82,60 @@ function convertMD5() {
     let md5 = document.getElementById("md5Input").value.trim();
 
     if (!isValidMD5(md5)) {
-        document.getElementById("md5Result").innerText =
-            "❌ MD5 không hợp lệ!";
+        document.getElementById("md5Result").innerText = "❌ MD5 sai!";
         document.getElementById("md5Confidence").innerText = "";
         return;
     }
 
     let num = md5ToNumber(md5);
     let result = num >= 50 ? 'TÀI' : 'XỈU';
-    let confidence = 50 + Math.floor(Math.random() * 50);
+    let confidence = 60 + Math.floor(Math.random() * 40);
 
-    document.getElementById("md5Result").innerText =
-        `Kết quả: ${result}`;
+    document.getElementById("md5Result").innerText = result;
     document.getElementById("md5Confidence").innerText =
-        `Độ tin cậy: ${confidence}%`;
+        "Độ tin cậy: " + confidence + "%";
 }
 
-// ===== AI =====
+// ===== AI V21 =====
 function predictAI() {
-    if (history.length < 3) return;
+    if (history.length < 5) return;
 
-    let last = history.slice(-5);
+    let last = history.slice(-10);
+    let score = { T: 0, X: 0 };
 
+    // TREND
     let countT = last.filter(x => x === 'T').length;
     let countX = last.filter(x => x === 'X').length;
 
-    let trend = countT > countX ? 'T' : 'X';
-    let ml = Math.random() > 0.5 ? 'T' : 'X';
-    let dice = Math.random() > 0.5 ? 'T' : 'X';
+    if (countT > countX) score.T += weights.trend;
+    else score.X += weights.trend;
 
-    let score = { T: 0, X: 0 };
+    // STREAK
+    let streak = 1;
+    for (let i = history.length - 1; i > 0; i--) {
+        if (history[i] === history[i - 1]) streak++;
+        else break;
+    }
 
-    score[trend] += weights.trend;
-    score[ml] += weights.ml;
-    score[dice] += weights.dice;
+    if (streak >= 3) {
+        let lastVal = history[history.length - 1];
+        score[lastVal] += weights.dice;
+    }
+
+    // PATTERN
+    let pattern = last.slice(-4).join('');
+
+    if (pattern === "TTTT") score.X += weights.ml;
+    if (pattern === "XXXX") score.T += weights.ml;
+
+    // PROBABILITY
+    score.T += countT / last.length;
+    score.X += countX / last.length;
 
     let final = score.T > score.X ? 'T' : 'X';
 
     let confidence = Math.max(score.T, score.X) /
-        (weights.trend + weights.ml + weights.dice);
+        (score.T + score.X);
 
     document.getElementById("predict").innerText =
         final === 'T' ? "🔥 TÀI" : "❄️ XỈU";
@@ -185,11 +157,11 @@ function addResult(r) {
 
     if (predict) {
         if (predict === r) {
-            weights.trend += 0.1;
-            weights.ml += 0.1;
+            weights.trend += 0.2;
+            weights.ml += 0.2;
         } else {
-            weights.trend -= 0.05;
-            weights.ml -= 0.05;
+            weights.trend -= 0.1;
+            weights.ml -= 0.1;
         }
     }
 }
