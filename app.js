@@ -13,43 +13,50 @@ const db = firebase.database();
 let history = [];
 let weights = { trend: 1, ml: 1, dice: 1 };
 let currentExpire = null;
+let isAdmin = false;
 
 // ===== LOGIN =====
 function login() {
-    let input = document.getElementById("keyInput").value;
+    let input = document.getElementById("keyInput").value.trim();
 
-    // ADMIN
+    // ===== ADMIN =====
     if (input === "TGL1985@@" || input === "TGL1985@") {
+        isAdmin = true;
+
         document.getElementById("admin").style.display = "block";
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("main").style.display = "block";
+
         loadKeys();
+
+        return; // 🔥 FIX QUAN TRỌNG
     }
 
+    // ===== USER =====
     db.ref("keys/" + input).once("value")
     .then(snap => {
         let data = snap.val();
 
-        if (!data && input !== "TGL1985@@" && input !== "TGL1985@") {
+        if (!data) {
             alert("Sai key!");
             return;
         }
 
-        if (data) {
-            let exp = new Date(data.expire);
-            let now = new Date();
+        let exp = new Date(data.expire);
+        let now = new Date();
 
-            if (exp < now) {
-                alert("Key hết hạn!");
-                return;
-            }
-
-            currentExpire = exp;
-            startTimer();
+        if (exp < now) {
+            alert("Key hết hạn!");
+            return;
         }
+
+        currentExpire = exp;
+        startTimer();
 
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("main").style.display = "block";
     })
-    .catch(err => alert("Lỗi kết nối Firebase: " + err));
+    .catch(err => alert("Lỗi Firebase: " + err));
 }
 
 // ===== TIMER =====
@@ -117,7 +124,7 @@ function extendKeyTime() {
     });
 }
 
-// LOAD KEY LIST REALTIME
+// ===== LOAD KEY =====
 function loadKeys() {
     db.ref("keys").on("value", snap => {
         document.getElementById("keyList").innerText =
@@ -142,7 +149,8 @@ function convertMD5() {
     let md5 = document.getElementById("md5Input").value.trim();
 
     if (!isValidMD5(md5)) {
-        document.getElementById("md5Result").innerText = "❌ MD5 không hợp lệ!";
+        document.getElementById("md5Result").innerText =
+            "❌ MD5 không hợp lệ!";
         document.getElementById("md5Confidence").innerText = "";
         return;
     }
