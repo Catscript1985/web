@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>LAM TOOL V20.3</title>
+<title>LAM TOOL V21</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,24 +11,24 @@
 
 <div id="loginBox">
     <h2>🔐 LOGIN KEY</h2>
-    <input type="text" id="keyInput" placeholder="Nhập KEY...">
+    <input id="keyInput" placeholder="Nhập KEY">
     <button onclick="login()">Đăng nhập</button>
 </div>
 
 <div id="main" style="display:none;">
-    <h1>🎰 LAM TOOL V20</h1>
+    <h1>🎰 LAM TOOL V21</h1>
 
-    <h3>🔐 Phân tích MD5</h3>
-    <input id="md5Input" placeholder="Nhập MD5 (32 ký tự)">
+    <h3>🔐 MD5</h3>
+    <input id="md5Input" placeholder="Nhập MD5">
     <button onclick="convertMD5()">Phân tích</button>
 
     <div class="card">
-        <p id="md5Result">Kết quả: ---</p>
-        <p id="md5Confidence">Độ tin cậy: 0%</p>
+        <p id="md5Result">---</p>
+        <p id="md5Confidence"></p>
     </div>
 
     <div class="card">
-        <h3>AI Predict:</h3>
+        <h3>AI Predict</h3>
         <p id="predict">---</p>
         <p id="confidence">0%</p>
     </div>
@@ -42,17 +42,8 @@
 </div>
 
 <div id="admin" style="display:none;">
-    <h2>🛠 ADMIN MENU</h2>
-
-    <input id="newKey" placeholder="Tạo key">
-    <input id="timeKey" placeholder="Số phút">
-    <button onclick="createKey()">Tạo KEY</button>
-
-    <input id="extendKey" placeholder="Key cần gia hạn">
-    <input id="extendTime" placeholder="Thêm phút">
-    <button onclick="extendKeyTime()">Gia hạn</button>
-
-    <pre id="keyList"></pre>
+    <h2>ADMIN PANEL</h2>
+    <p>⚠️ Bản online: tạo key phải sửa file GitHub</p>
 </div>
 
 <script src="app.js"></script>
