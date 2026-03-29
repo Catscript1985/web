@@ -2,6 +2,7 @@ body {
     background: black;
     color: #00ffcc;
     text-align: center;
+    font-family: Arial;
 }
 
 .card {
@@ -24,6 +25,6 @@ button {
     right: 10px;
     background: #00ffcc;
     color: black;
-    padding: 5px;
+    padding: 5px 10px;
     border-radius: 8px;
 }
